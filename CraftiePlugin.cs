@@ -94,7 +94,7 @@ namespace Craftie
         }
         private bool HasDuplicateCurrencyChanceAtLeast(Mods mods, int percent)
         {
-            var regex = new Regex(@"Heist Chests have a (\d+)% change to Duplicate contained Currency");
+            var regex = new Regex(@"Heist Chests have a (\d+)% chance to Duplicate contained Currency");
             var quantMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
             if (quantMod == null)
                 return false;
