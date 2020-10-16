@@ -145,7 +145,6 @@ namespace Craftie
             var itemToCraft = GetItemToCraft();
             while (itemToCraft == null)
             {
-                LogMsg("Item To Craft is null");
                 itemToCraft = GetItemToCraft();
                 Thread.Sleep(100);
             }
@@ -155,35 +154,30 @@ namespace Craftie
 
         private IEnumerator UseOrbOfAlteration()
         {
-            LogMsg("UseOrbOfAlteration");
             var orbOfAlterationItem = GetOrbOfAlterationItem();
             return UseOrb(orbOfAlterationItem);
         }
 
         private IEnumerator UseRegalOrb()
         {
-            LogMsg("UseRegalOrb");
             var regalOrbItem = GetRegalOrbItem();
             return UseOrb(regalOrbItem);
         }
 
         private IEnumerator UseOrbOfAugmentation()
         {
-            LogMsg("UseOrbOfAugmentation");
             var orbOfAugmentationItem = GetOrbOfAugmentationItem();
             return UseOrb(orbOfAugmentationItem);
         }
 
         private IEnumerator UseOrbOfScouring()
         {
-            LogMsg("UseOrbOfScouring");
             var orbOfScouringItem = GetOrbOfScouringItem();
             return UseOrb(orbOfScouringItem);
         }
 
         private IEnumerator UseOrbOfTransmutation()
         {
-            LogMsg("UseOrbOfTransmutation");
             var orbOfTransmutationItem = GetOrbOfTransmutationItem();
             return UseOrb(orbOfTransmutationItem);
         }
