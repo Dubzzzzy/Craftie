@@ -82,6 +82,10 @@ namespace Craftie
                             {
                                 UseRegalOrb();
                             }
+                            else
+                            {
+                                UseOrbOfAlteration();
+                            }
                             break;
                         case ItemRarity.Rare:
                             UseOrbOfScouring();
@@ -91,6 +95,11 @@ namespace Craftie
                     }
                 }
             }
+        }
+
+        private void UseOrbOfAlteration()
+        {
+            LogMsg("UseOrbOfAlteration");
         }
 
         private void UseRegalOrb()
