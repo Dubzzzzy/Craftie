@@ -26,6 +26,10 @@ namespace Craftie
 
         private const string ORB_OF_SCOURING = "Orb of Scouring";
 
+        private bool Toggled { get; set; } = false;
+
+        private bool CraftingKeyPrevState { get; set; } = false;
+
         public override void OnLoad()
         {
         }
@@ -38,6 +42,16 @@ namespace Craftie
 
         public override void Render()
         {
+            var craftingKeyStateChanged = Input.IsKeyDown(Settings.StartCraftingButton.Value) != CraftingKeyPrevState;
+            if (craftingKeyStateChanged)
+            {
+                if (!Input.IsKeyDown(Settings.StartCraftingButton.Value))
+                {
+                    Toggled = !Toggled;
+                }
+            }
+            CraftingKeyPrevState = Input.IsKeyDown(Settings.StartCraftingButton.Value);
+
             if (ShouldCraft())
             {
                 var itemToCraft = GetItemToCraft();
@@ -47,7 +61,7 @@ namespace Craftie
 
         private bool ShouldCraft()
         {
-            if (!Input.IsKeyDown(Settings.StartCraftingButton.Value))
+            if (!Toggled)
                 return false;
             if (!GameController.Game.IngameState.IngameUi.StashElement.IsVisible)
                 return false;
