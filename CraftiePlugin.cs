@@ -95,6 +95,10 @@ namespace Craftie
         {
             while (!CraftIsCompleted())
             {
+                if (!Toggled)
+                {
+                    yield break;
+                }
                 var itemToCraft = GetItemToCraft();
                 var modsComponent = itemToCraft.Item.GetComponent<Mods>();
                 switch (modsComponent.ItemRarity)
