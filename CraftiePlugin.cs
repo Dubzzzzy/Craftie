@@ -102,7 +102,7 @@ namespace Craftie
                         UseOrbOfScouring();
                         break;
                 }
-                yield return new WaitRandom(700, 1200);
+                yield return new WaitTime(1200);
             }
 
         }
