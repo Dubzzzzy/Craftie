@@ -188,6 +188,6 @@ namespace Craftie
             GetRegalOrbItem() != null;
 
         private NormalInventoryItem GetInventoryItemByName(string name) =>
-            GameController.Game.IngameState.IngameUi.StashElement.VisibleStash.VisibleInventoryItems.FirstOrDefault(x => x.Item.GetComponent<Base>().Name == name);
+            GameController.Game.IngameState.IngameUi.StashElement.VisibleStash.VisibleInventoryItems.FirstOrDefault(x => x.Item != null && x.Item.GetComponent<Base>().Name == name);
     }
 }
