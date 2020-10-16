@@ -64,9 +64,9 @@ namespace Craftie
 
             if (ShouldCraft())
             {
-                var itemToCraft = GetItemToCraft();
-                if (CraftIsCompleted(itemToCraft))
+                if (CraftIsCompleted())
                 {
+                    var itemToCraft = GetItemToCraft();
                     Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
                 }
                 else
@@ -93,9 +93,9 @@ namespace Craftie
 
         private IEnumerator CraftItem()
         {
-            var itemToCraft = GetItemToCraft();
-            while (!CraftIsCompleted(itemToCraft))
+            while (!CraftIsCompleted())
             {
+                var itemToCraft = GetItemToCraft();
                 var modsComponent = itemToCraft.Item.GetComponent<Mods>();
                 switch (modsComponent.ItemRarity)
                 {
@@ -124,8 +124,9 @@ namespace Craftie
             }
         }
 
-        private bool CraftIsCompleted(NormalInventoryItem itemToCraft)
+        private bool CraftIsCompleted()
         {
+            var itemToCraft = GetItemToCraft();
             var modsComponent = itemToCraft.Item.GetComponent<Mods>();
             return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
         }
