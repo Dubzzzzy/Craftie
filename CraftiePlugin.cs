@@ -69,6 +69,8 @@ namespace Craftie
             }
             CraftingKeyPrevState = Input.IsKeyDown(Settings.StartCraftingButton);
 
+            DrawModsLabels();
+
             if (ShouldCraft())
             {
                 if (CraftIsCompleted())
@@ -81,6 +83,25 @@ namespace Craftie
                 {
                     TryStartCraftItemCoroutine();
                 }
+            }
+        }
+
+        private void DrawModsLabels()
+        {
+            var itemToCraft = GetItemToCraft();
+            if (itemToCraft == null)
+                return;
+            
+            var modsComponent = itemToCraft.Item.GetComponent<Mods>();
+
+            if (HasDuplicateCurrencyChance(modsComponent))
+            {
+                Graphics.DrawText("Duplicate Currency", itemToCraft.GetClientRect().BottomLeft);
+            }
+
+            if (HasIncQuantity(modsComponent))
+            {
+                Graphics.DrawText("Increased Quantity", itemToCraft.GetClientRect().BottomLeft);
             }
         }
 
