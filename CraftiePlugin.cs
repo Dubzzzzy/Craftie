@@ -72,7 +72,6 @@ namespace Craftie
                 else
                 {
                     TryStartCraftItemCoroutine();
-                    Core.ParallelRunner.Run(CraftItem(), this);
                 }
             }
         }
