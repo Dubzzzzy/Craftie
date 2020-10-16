@@ -81,13 +81,14 @@ namespace Craftie
         {
             if (_coroutineWorker != null && _coroutineWorker.IsDone)
             {
+                LogMsg("Finished");
                 _coroutineWorker = null;
             }
 
             if (_coroutineWorker == null)
             {
                 _coroutineWorker = new Coroutine(CraftItem(), this, COROUTINE_NAME);
-                Core.ParallelRunner.Run(CraftItem(), this);
+                Core.ParallelRunner.Run(_coroutineWorker);
             }
         }
 
