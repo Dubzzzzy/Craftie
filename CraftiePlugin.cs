@@ -139,7 +139,7 @@ namespace Craftie
         private bool CraftIsCompleted()
         {
             var itemToCraft = GetItemToCraft();
-            if (itemToCraft.Item == null)
+            if (itemToCraft == null)
             {
                 LogMsg("Item is null");
             }
