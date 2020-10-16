@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +27,9 @@ namespace Craftie
         private const string ORB_OF_AUGMENTATION = "Orb of Augmentation";
 
         private const string ORB_OF_SCOURING = "Orb of Scouring";
+
+        private const string REGAL_ORB = "Regal Orb";
+
 
         private bool Toggled { get; set; } = false;
 
@@ -56,12 +60,57 @@ namespace Craftie
             if (ShouldCraft())
             {
                 var itemToCraft = GetItemToCraft();
-                var mods = itemToCraft.Item.GetComponent<Mods>();
-                if (HasDuplicateCurrencyChanceAtLeast(mods, Settings.DuplicateCurrencyChance))
+                var modsComponent = itemToCraft.Item.GetComponent<Mods>();
+                var craftIsCompleted = HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
+                if (craftIsCompleted)
                 {
                     Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
                 }
+                else
+                {
+                    switch (modsComponent.ItemRarity)
+                    {
+                        case ItemRarity.Normal:
+                            UseOrbOfTransmutation();
+                            break;
+                        case ItemRarity.Magic:
+                            if (modsComponent.HumanStats.Count < 2)
+                            {
+                                UseOrbOfAugmentation();
+                            }
+                            else if (HasDuplicateCurrencyChance(modsComponent) || HasIncQuantity(modsComponent))
+                            {
+                                UseRegalOrb();
+                            }
+                            break;
+                        case ItemRarity.Rare:
+                            UseOrbOfScouring();
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
+        }
+
+        private void UseRegalOrb()
+        {
+            LogMsg("UseRegalOrb");
+        }
+
+        private void UseOrbOfAugmentation()
+        {
+            LogMsg("UseOrbOfAugmentation");
+        }
+
+        private void UseOrbOfScouring()
+        {
+            LogMsg("UseOrbOfScouring");
+        }
+
+        private void UseOrbOfTransmutation()
+        {
+            LogMsg("UseOrbOfTransmutation");
         }
 
         private bool ShouldCraft()
@@ -72,10 +121,15 @@ namespace Craftie
                 return false;
             if (GameController.Game.IngameState.IngameUi.StashElement.VisibleStash.InvType != InventoryType.CurrencyStash)
                 return false;
-            if (!HasItemToCraft() || !HasOrbOfAlteration() || !HasOrbOfAugmentation() || !HasOrbOfScouring() || !HasOrbOfTransmutation())
+            if (!HasItemToCraft())
+                return false;
+            if (!HasAllCurrencyNeeded())
                 return false;
             return true;
         }
+
+        private bool HasAllCurrencyNeeded() => 
+            HasOrbOfAlteration() && HasOrbOfAugmentation() && HasOrbOfScouring() && HasOrbOfTransmutation() && HasRegalOrb();
 
         private NormalInventoryItem GetItemToCraft() =>
             GetInventoryItemByName(ITEM_TO_CRAFT_NAME);
@@ -83,23 +137,24 @@ namespace Craftie
         private bool HasItemToCraft() =>
             GetItemToCraft() != null;
 
-        private bool HasIncQuantityAtLeast(Mods mods, int percent)
+        private bool HasIncQuantity(Mods mods)
         {
             var regex = new Regex(@"(\d+)% increased Quantity of Items dropped in Heists");
             var quantMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
             if (quantMod == null)
                 return false;
             var quantCurrentPercent = int.Parse(regex.Match(quantMod).Groups[1].Value);
-            return quantCurrentPercent >= percent;
+            return quantCurrentPercent >= Settings.IncreasedQuantity;
         }
-        private bool HasDuplicateCurrencyChanceAtLeast(Mods mods, int percent)
+
+        private bool HasDuplicateCurrencyChance(Mods mods)
         {
             var regex = new Regex(@"Heist Chests have a (\d+)% chance to Duplicate contained Currency");
-            var quantMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
-            if (quantMod == null)
+            var duplicateCurrencyMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
+            if (duplicateCurrencyMod == null)
                 return false;
-            var quantCurrentPercent = int.Parse(regex.Match(quantMod).Groups[1].Value);
-            return quantCurrentPercent >= percent;
+            var duplicateCurrencyCurrentPercent = int.Parse(regex.Match(duplicateCurrencyMod).Groups[1].Value);
+            return duplicateCurrencyCurrentPercent >= Settings.DuplicateCurrencyChance;
         }
 
         private NormalInventoryItem GetOrbOfAlterationItem() =>
@@ -122,8 +177,15 @@ namespace Craftie
 
         private NormalInventoryItem GetOrbOfScouringItem() =>
             GetInventoryItemByName(ORB_OF_SCOURING);
+
         private bool HasOrbOfScouring() =>
             GetOrbOfScouringItem() != null;
+
+        private NormalInventoryItem GetRegalOrbItem() =>
+            GetInventoryItemByName(REGAL_ORB);
+
+        private bool HasRegalOrb() =>
+            GetRegalOrbItem() != null;
 
         private NormalInventoryItem GetInventoryItemByName(string name) =>
             GameController.Game.IngameState.IngameUi.StashElement.VisibleStash.VisibleInventoryItems.FirstOrDefault(x => x.Item.GetComponent<Base>().Name == name);
