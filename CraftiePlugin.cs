@@ -138,9 +138,18 @@ namespace Craftie
 
         private bool CraftIsCompleted()
         {
-            var itemToCraft = GetItemToCraft();
-            var modsComponent = itemToCraft.Item.GetComponent<Mods>();
-            return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
+            try
+            {
+                var itemToCraft = GetItemToCraft();
+                var modsComponent = itemToCraft.Item.GetComponent<Mods>();
+                return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
+            }
+            catch (Exception exception)
+            {
+                LogError(exception.Message);
+                LogError(exception.StackTrace);
+                throw;
+            }
         }
 
         private IEnumerator UseOrbOfAlteration()
