@@ -10,13 +10,10 @@ namespace Craftie
     {
         public CraftiePluginSettings()
         {
-            Enable = new ToggleNode(false);
-            StartCraftingButton = new HotkeyNode(Keys.NumPad5);
         }
 
-        public ToggleNode Enable { get; set; }
-
-        [Menu("Start Crafting")]
-        public HotkeyNode StartCraftingButton { get; set; }
+        public ColorNode TerrainColor { get; set; } = new ColorNode(0x9F9F9F4D);
+        public ToggleNode Enable { get; set; } = new ToggleNode(false);
+        [Menu("Hotkey")] public HotkeyNode HotKey { get; set; } = Keys.Oem5;
     }
 }
