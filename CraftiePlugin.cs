@@ -9,6 +9,18 @@ namespace Craftie
 {
     public class CraftiePlugin : BaseSettingsPlugin<CraftiePluginSettings>
     {
+        public override void OnLoad()
+        {
+        }
 
+        public override bool Initialise()
+        {
+            return true;
+        }
+
+        public override void Render()
+        {
+
+        }
     }
 }
