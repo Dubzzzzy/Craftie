@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExileCore;
@@ -139,21 +140,14 @@ namespace Craftie
         private bool CraftIsCompleted()
         {
             var itemToCraft = GetItemToCraft();
-            if (itemToCraft == null)
+            while (itemToCraft == null)
             {
-                LogMsg("Item is null");
+                LogMsg("Item To Craft is null");
+                itemToCraft = GetItemToCraft();
+                Thread.Sleep(100);
             }
-            try
-            {
-                var modsComponent = itemToCraft.Item.GetComponent<Mods>();
-                return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
-            }
-            catch (Exception exception)
-            {
-                LogError(exception.Message);
-                LogError(exception.StackTrace);
-                throw;
-            }
+            var modsComponent = itemToCraft.Item.GetComponent<Mods>();
+            return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
         }
 
         private IEnumerator UseOrbOfAlteration()
