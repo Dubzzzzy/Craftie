@@ -12,8 +12,8 @@ namespace Craftie
         {
         }
 
-        public ColorNode TerrainColor { get; set; } = new ColorNode(0x9F9F9F4D);
-        public ToggleNode Enable { get; set; } = new ToggleNode(false);
-        [Menu("Hotkey")] public HotkeyNode HotKey { get; set; } = Keys.Oem5;
+        public ToggleNode Enable { get; set; } = new ToggleNode(true);
+
+        [Menu("Start Crafting Button")] public HotkeyNode StartCraftingButton { get; set; } = Keys.NumPad5;
     }
 }
