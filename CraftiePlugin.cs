@@ -75,8 +75,7 @@ namespace Craftie
                 {
                     var itemToCraft = GetItemToCraft();
                     Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
-                    Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Yellow, 3);
-                    Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 1);
+                    Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Yellow, 2);
                 }
                 else
                 {
