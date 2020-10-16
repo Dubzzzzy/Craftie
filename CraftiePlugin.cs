@@ -41,7 +41,7 @@ namespace Craftie
             if (ShouldCraft())
             {
                 var itemToCraft = GetItemToCraft();
-                Graphics.DrawText("Should craft", itemToCraft.Position, Color.Red);
+                Graphics.DrawText("Should craft", itemToCraft.Parent.Position, Color.Red);
             }
         }
 
