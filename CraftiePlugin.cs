@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ExileCore;
 using ExileCore.PoEMemory.Components;
 using ExileCore.PoEMemory.Elements.InventoryElements;
@@ -35,6 +36,8 @@ namespace Craftie
         private const string COROUTINE_NAME = "Craftie Coroutine";
 
         private Coroutine _coroutineWorker;
+
+        private WaitRandom _waitRandom = new WaitRandom(70, 120);
 
         private bool Toggled { get; set; } = false;
 
@@ -80,7 +83,6 @@ namespace Craftie
         {
             if (_coroutineWorker != null && _coroutineWorker.IsDone)
             {
-                LogMsg("Finished");
                 _coroutineWorker = null;
             }
 
@@ -95,36 +97,42 @@ namespace Craftie
         {
             while (!CraftIsCompleted())
             {
+                if (!HasAllCurrencyNeeded())
+                {
+                    Toggled = false;
+                }
+
                 if (!Toggled)
                 {
                     yield break;
                 }
+
                 var itemToCraft = GetItemToCraft();
                 var modsComponent = itemToCraft.Item.GetComponent<Mods>();
                 switch (modsComponent.ItemRarity)
                 {
                     case ItemRarity.Normal:
-                        UseOrbOfTransmutation();
+                        yield return UseOrbOfTransmutation();
                         break;
                     case ItemRarity.Magic:
                         if (modsComponent.HumanStats.Count < 2)
                         {
-                            UseOrbOfAugmentation();
+                            yield return UseOrbOfAugmentation();
                         }
                         else if (HasDuplicateCurrencyChance(modsComponent) || HasIncQuantity(modsComponent))
                         {
-                            UseRegalOrb();
+                            yield return UseRegalOrb();
                         }
                         else
                         {
-                            UseOrbOfAlteration();
+                            yield return UseOrbOfAlteration();
                         }
                         break;
                     case ItemRarity.Rare:
-                        UseOrbOfScouring();
+                        yield return UseOrbOfScouring();
                         break;
                 }
-                yield return new WaitTime(1000);
+                yield return _waitRandom;
             }
         }
 
@@ -135,29 +143,51 @@ namespace Craftie
             return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
         }
 
-        private void UseOrbOfAlteration()
+        private IEnumerator UseOrbOfAlteration()
         {
             LogMsg("UseOrbOfAlteration");
+            var orbOfAlterationItem = GetOrbOfAlterationItem();
+            return UseOrb(orbOfAlterationItem);
         }
 
-        private void UseRegalOrb()
+        private IEnumerator UseRegalOrb()
         {
             LogMsg("UseRegalOrb");
+            var regalOrbItem = GetRegalOrbItem();
+            return UseOrb(regalOrbItem);
         }
 
-        private void UseOrbOfAugmentation()
+        private IEnumerator UseOrbOfAugmentation()
         {
             LogMsg("UseOrbOfAugmentation");
+            var orbOfAugmentationItem = GetOrbOfAugmentationItem();
+            return UseOrb(orbOfAugmentationItem);
         }
 
-        private void UseOrbOfScouring()
+        private IEnumerator UseOrbOfScouring()
         {
             LogMsg("UseOrbOfScouring");
+            var orbOfScouringItem = GetOrbOfScouringItem();
+            return UseOrb(orbOfScouringItem);
         }
 
-        private void UseOrbOfTransmutation()
+        private IEnumerator UseOrbOfTransmutation()
         {
             LogMsg("UseOrbOfTransmutation");
+            var orbOfTransmutationItem = GetOrbOfTransmutationItem();
+            return UseOrb(orbOfTransmutationItem);
+        }
+
+        private IEnumerator UseOrb(NormalInventoryItem orbItem)
+        {
+            var itemToCraft = GetItemToCraft();
+            yield return Input.SetCursorPositionSmooth(orbItem.GetClientRect().Center);
+            yield return _waitRandom;
+            Input.Click(MouseButtons.Right);
+            yield return _waitRandom;
+            yield return Input.SetCursorPositionSmooth(itemToCraft.GetClientRect().Center);
+            yield return _waitRandom;
+            Input.Click(MouseButtons.Left);
         }
 
         private bool ShouldCraft()
