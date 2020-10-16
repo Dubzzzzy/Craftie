@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,7 @@ using ExileCore.PoEMemory.Components;
 using ExileCore.PoEMemory.Elements.InventoryElements;
 using ExileCore.PoEMemory.MemoryObjects;
 using ExileCore.RenderQ;
+using ExileCore.Shared;
 using ExileCore.Shared.Enums;
 using ImGuiNET;
 using SharpDX;
@@ -60,41 +62,55 @@ namespace Craftie
             if (ShouldCraft())
             {
                 var itemToCraft = GetItemToCraft();
-                var modsComponent = itemToCraft.Item.GetComponent<Mods>();
-                var craftIsCompleted = HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
-                if (craftIsCompleted)
+                if (CraftIsCompleted(itemToCraft))
                 {
                     Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
                 }
                 else
                 {
-                    switch (modsComponent.ItemRarity)
-                    {
-                        case ItemRarity.Normal:
-                            UseOrbOfTransmutation();
-                            break;
-                        case ItemRarity.Magic:
-                            if (modsComponent.HumanStats.Count < 2)
-                            {
-                                UseOrbOfAugmentation();
-                            }
-                            else if (HasDuplicateCurrencyChance(modsComponent) || HasIncQuantity(modsComponent))
-                            {
-                                UseRegalOrb();
-                            }
-                            else
-                            {
-                                UseOrbOfAlteration();
-                            }
-                            break;
-                        case ItemRarity.Rare:
-                            UseOrbOfScouring();
-                            break;
-                        default:
-                            break;
-                    }
+                    Core.ParallelRunner.Run(CraftItem(), this);
                 }
             }
+        }
+
+        private IEnumerator CraftItem()
+        {
+            var itemToCraft = GetItemToCraft();
+            var modsComponent = itemToCraft.Item.GetComponent<Mods>();
+            while (!CraftIsCompleted(itemToCraft))
+            {
+                switch (modsComponent.ItemRarity)
+                {
+                    case ItemRarity.Normal:
+                        UseOrbOfTransmutation();
+                        break;
+                    case ItemRarity.Magic:
+                        if (modsComponent.HumanStats.Count < 2)
+                        {
+                            UseOrbOfAugmentation();
+                        }
+                        else if (HasDuplicateCurrencyChance(modsComponent) || HasIncQuantity(modsComponent))
+                        {
+                            UseRegalOrb();
+                        }
+                        else
+                        {
+                            UseOrbOfAlteration();
+                        }
+                        break;
+                    case ItemRarity.Rare:
+                        UseOrbOfScouring();
+                        break;
+                }
+                yield return new WaitRandom(70, 120);
+            }
+
+        }
+
+        private bool CraftIsCompleted(NormalInventoryItem itemToCraft)
+        {
+            var modsComponent = itemToCraft.Item.GetComponent<Mods>();
+            return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
         }
 
         private void UseOrbOfAlteration()
