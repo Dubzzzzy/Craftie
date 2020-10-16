@@ -138,9 +138,13 @@ namespace Craftie
 
         private bool CraftIsCompleted()
         {
+            var itemToCraft = GetItemToCraft();
+            if (itemToCraft.Item == null)
+            {
+                LogMsg("Item is null");
+            }
             try
             {
-                var itemToCraft = GetItemToCraft();
                 var modsComponent = itemToCraft.Item.GetComponent<Mods>();
                 return HasDuplicateCurrencyChance(modsComponent) && HasIncQuantity(modsComponent);
             }
