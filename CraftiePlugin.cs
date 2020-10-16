@@ -43,21 +43,21 @@ namespace Craftie
 
         public override void Render()
         {
-            var craftingKeyStateChanged = Input.IsKeyDown(Settings.StartCraftingButton.Value) != CraftingKeyPrevState;
+            var craftingKeyStateChanged = Input.IsKeyDown(Settings.StartCraftingButton) != CraftingKeyPrevState;
             if (craftingKeyStateChanged)
             {
-                if (!Input.IsKeyDown(Settings.StartCraftingButton.Value))
+                if (!Input.IsKeyDown(Settings.StartCraftingButton))
                 {
                     Toggled = !Toggled;
                 }
             }
-            CraftingKeyPrevState = Input.IsKeyDown(Settings.StartCraftingButton.Value);
+            CraftingKeyPrevState = Input.IsKeyDown(Settings.StartCraftingButton);
 
             if (ShouldCraft())
             {
                 var itemToCraft = GetItemToCraft();
                 var mods = itemToCraft.Item.GetComponent<Mods>();
-                if (HasDuplicateCurrencyChanceAtLeast(mods, 13))
+                if (HasDuplicateCurrencyChanceAtLeast(mods, Settings.DuplicateCurrencyChance))
                 {
                     Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
                 }
