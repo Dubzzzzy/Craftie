@@ -32,6 +32,9 @@ namespace Craftie
 
         private const string REGAL_ORB = "Regal Orb";
 
+        private const string COROUTINE_NAME = "Craftie Coroutine";
+
+        private Coroutine _coroutineWorker;
 
         private bool Toggled { get; set; } = false;
 
@@ -68,8 +71,23 @@ namespace Craftie
                 }
                 else
                 {
+                    TryStartCraftItemCoroutine();
                     Core.ParallelRunner.Run(CraftItem(), this);
                 }
+            }
+        }
+
+        private void TryStartCraftItemCoroutine()
+        {
+            if (_coroutineWorker != null && _coroutineWorker.IsDone)
+            {
+                _coroutineWorker = null;
+            }
+
+            if (_coroutineWorker == null)
+            {
+                _coroutineWorker = new Coroutine(CraftItem(), this, COROUTINE_NAME);
+                Core.ParallelRunner.Run(CraftItem(), this);
             }
         }
 
@@ -102,9 +120,8 @@ namespace Craftie
                         UseOrbOfScouring();
                         break;
                 }
-                yield return new WaitTime(1200);
+                yield return new WaitTime(1000);
             }
-
         }
 
         private bool CraftIsCompleted(NormalInventoryItem itemToCraft)
