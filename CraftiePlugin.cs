@@ -51,6 +51,9 @@ namespace Craftie
         public override bool Initialise()
         {
             Input.RegisterKey(Settings.StartCraftingButton.Value);
+            _waitRandom = new WaitRandom(Settings.MinDelay, Settings.MaxDelay);
+            Settings.MinDelay.OnValueChanged += (sender, newValue) => _waitRandom = new WaitRandom(newValue, Settings.MaxDelay);
+            Settings.MaxDelay.OnValueChanged += (sender, newValue) => _waitRandom = new WaitRandom(Settings.MinDelay, newValue);
             return true;
         }
 

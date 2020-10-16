@@ -22,5 +22,11 @@ namespace Craftie
         
         [Menu("Increased Quantity Modifier")]
         public RangeNode<int> IncreasedQuantity { get; set; } = new RangeNode<int>(10, 7, 15);
+        
+        [Menu("Min Delay")]
+        public RangeNode<int> MinDelay { get; set; } = new RangeNode<int>(70, 20, 1000);
+        
+        [Menu("Max Delay")]
+        public RangeNode<int> MaxDelay { get; set; } = new RangeNode<int>(120, 20, 1000);
     }
 }
