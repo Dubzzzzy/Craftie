@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ExileCore;
 using ExileCore.PoEMemory.Components;
@@ -55,7 +56,11 @@ namespace Craftie
             if (ShouldCraft())
             {
                 var itemToCraft = GetItemToCraft();
-                Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Red, 1);
+                var mods = itemToCraft.Item.GetComponent<Mods>();
+                if (HasIncQuantityAtLeast(mods, 10))
+                {
+                    Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Red, 1);
+                }
             }
         }
 
@@ -77,6 +82,16 @@ namespace Craftie
 
         private bool HasItemToCraft() =>
             GetItemToCraft() != null;
+
+        private bool HasIncQuantityAtLeast(Mods mods, int percent)
+        {
+            var regex = new Regex(@"(\d+)% increased Quantity of Items dropped in Heists");
+            var quantMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
+            if (quantMod == null)
+                return false;
+            var quantCurrentPercent = int.Parse(regex.Match(quantMod).Groups[1].Value);
+            return quantCurrentPercent >= percent;
+        }
 
         private NormalInventoryItem GetOrbOfAlterationItem() =>
             GetInventoryItemByName(ORB_OF_ALTERATION);
