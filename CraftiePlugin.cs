@@ -59,7 +59,7 @@ namespace Craftie
                 var mods = itemToCraft.Item.GetComponent<Mods>();
                 if (HasIncQuantityAtLeast(mods, 10))
                 {
-                    Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Red, 1);
+                    Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
                 }
             }
         }
