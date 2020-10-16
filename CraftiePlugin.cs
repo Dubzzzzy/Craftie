@@ -57,7 +57,7 @@ namespace Craftie
             {
                 var itemToCraft = GetItemToCraft();
                 var mods = itemToCraft.Item.GetComponent<Mods>();
-                if (HasIncQuantityAtLeast(mods, 10))
+                if (HasDuplicateCurrencyChanceAtLeast(mods, 13))
                 {
                     Graphics.DrawFrame(itemToCraft.GetClientRect(), Color.Green, 5);
                 }
@@ -86,6 +86,15 @@ namespace Craftie
         private bool HasIncQuantityAtLeast(Mods mods, int percent)
         {
             var regex = new Regex(@"(\d+)% increased Quantity of Items dropped in Heists");
+            var quantMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
+            if (quantMod == null)
+                return false;
+            var quantCurrentPercent = int.Parse(regex.Match(quantMod).Groups[1].Value);
+            return quantCurrentPercent >= percent;
+        }
+        private bool HasDuplicateCurrencyChanceAtLeast(Mods mods, int percent)
+        {
+            var regex = new Regex(@"Heist Chests have a (\d+)% change to Duplicate contained Currency");
             var quantMod = mods.HumanStats.FirstOrDefault(x => regex.IsMatch(x));
             if (quantMod == null)
                 return false;
