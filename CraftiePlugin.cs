@@ -94,9 +94,9 @@ namespace Craftie
         private IEnumerator CraftItem()
         {
             var itemToCraft = GetItemToCraft();
-            var modsComponent = itemToCraft.Item.GetComponent<Mods>();
             while (!CraftIsCompleted(itemToCraft))
             {
+                var modsComponent = itemToCraft.Item.GetComponent<Mods>();
                 switch (modsComponent.ItemRarity)
                 {
                     case ItemRarity.Normal:
